@@ -14,7 +14,7 @@ session_start();
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-if ($username == "" && $password == "") {
+if ($username == "n" && $password == "") {
     echo "empty";
 } else {
     $stmt = "SELECT * FROM users WHERE username=? AND password=?";
