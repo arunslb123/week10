@@ -1,50 +1,38 @@
 <?php
-// First start a session. This should be right at the top of your login page.
+$dsn = 'mysql:dbname=acsm_4729051611eebc5;host=us-cdbr-azure-southcentral-e.cloudapp.net';
+$db_user = "b5e6932691e7ad";
+$db_password="431dfc7a";
+
+try {
+    $conn = new PDO($dsn, $db_user, $db_password);
+} catch (PDOException $e) {
+    echo "Connection faileds: " . $e->getMessage();
+}
+
 session_start();
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Login Portfolio</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link href="images/avator.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link href="images/avator.ico" type="image/x-icon" rel="icon"/>
-    <!-- lightbox-->
-    <link rel="stylesheet" href="css/lightbox.css">
-</head>
-<body>
-<h1>Personal Page</h1>
-<div id="avator"></div>
-<h3>Login</h3>
-<?php
-if (isset($_SESSION['error'])) {
-    ?>
-    <div class='errormsg'><?php echo $_SESSION['error']; ?></div>
-    <?php
+
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+if ($username == "" && $password == "") {
+    echo "empty";
+} else {
+    $stmt = "SELECT * FROM users WHERE username=? AND password=?";
+    $query = $conn->prepare($stmt);
+    $query->bindParam(1, $username);
+    $query->bindParam(2, $password);
+
+    $query->execute();
+
+    if ($query->rowCount() == 1) {
+        $_SESSION["auth"] = true;
+        $_SESSION["username"] = $username;
+
+        echo "success";
+
+        // echo $_SESSION["auth"];
+    } else {
+        echo "error";
+    }
 }
 ?>
-
-<div id="loginMsg"></div>
-
-<form id="formLogin" action="checkLogin.php" method="POST">
-    <table class="form">
-        <tr>
-            <td class="l">User Name:</td>
-            <td class="r"><input type="text" id="username" name="username"></td>
-        </tr>
-        <tr>
-            <td class="l">Password:</td>
-            <td class="r"><input type="password" id="password" name="password"></td>
-        </tr>
-        <tr>
-    </table>
-    <input type="submit" name="submit" id="submit" value="Login">
-    <input type="reset" value="Reset">
-</form>
-</section>
-
-<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
-<script src="js/login.js"></script>
-</body>
-</html>
